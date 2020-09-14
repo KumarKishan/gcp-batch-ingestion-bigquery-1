@@ -25,11 +25,11 @@ import static org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.WriteDisposit
 public class TemplatePipeline {
     public static void main(String[] args) {
         PipelineOptionsFactory.register(TemplateOptions.class);
-        TemplateOptions options = PipelineOptionsFactory.fromArgs(args).withoutValidation().as(TemplateOptions.class);
+        TemplateOptions options = PipelineOptionsFactory.fromArgs(args).as(TemplateOptions.class);
         Pipeline pipeline = Pipeline.create(options);
         pipeline.apply("READ", TextIO.read().from(options.getInputFile()))
                 .apply("TRANSFORM", ParDo.of(new WikiParDo()))
-                .apply("WRITE", BigQueryIO.writeTableRows()
+                .apply("WRITE", BigQueryIO.writeTableRows().withoutValidation()
                         .to(String.format("%s:dotc_2018.wiki_demo", options.getProject()))
                         .withCreateDisposition(CREATE_IF_NEEDED)
                         .withWriteDisposition(WRITE_APPEND)
